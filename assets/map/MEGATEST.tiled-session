@@ -1,0 +1,66 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "MEGATEST.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "1NABOR.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Background.tsx": {
+            "scaleInDock": 0.45,
+            "scaleInEditor": 1
+        },
+        "MEGATEST.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 703,
+                "y": 581
+            }
+        },
+        "Tileset.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.45,
+            "scaleInEditor": 1
+        },
+        "background.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "blocki.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/wein/source/repos/SDLtest/assets/map",
+    "last.imagePath": "C:/Users/wein/Downloads/craftpix-net-672461-free-swamp-game-tileset-pixel-art/2 Background",
+    "map.height": 50,
+    "map.lastUsedExportFilter": "JSON map-файлы (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 50,
+    "openFiles": [
+        "MEGATEST.tmx",
+        "Tileset.tsx",
+        "Background.tsx"
+    ],
+    "project": "MEGATEST.tiled-project",
+    "recentFiles": [
+        "Background.tsx",
+        "Tileset.tsx",
+        "MEGATEST.tmx",
+        "background.tsx",
+        "blocki.tsx",
+        "1NABOR.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 0
+}

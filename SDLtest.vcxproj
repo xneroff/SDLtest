@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\include;C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\wein\source\repos\SDLtest\SDL3_ttf-3.2.2\include;C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\include;C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\include;C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\wein\source\repos\SDLtest\SDL3_ttf-3.2.2\include;C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\include;C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,12 +111,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)external\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\lib\x64;C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;SDL3_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\wein\source\repos\SDLtest\SDL3_ttf-3.2.2\lib\x64;C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\lib\x64;C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;SDL3_image.lib;SDL3_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -128,18 +129,41 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)external\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\lib\x64;C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;SDL3_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\wein\source\repos\SDLtest\SDL3_ttf-3.2.2\lib\x64;C:\Users\wein\source\repos\SDLtest\SDL3_image-3.2.4\lib\x64;C:\Users\wein\source\repos\SDLtest\SDL3-3.2.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;SDL3_image.lib;SDL3_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerHealthHUD.cpp" />
+    <ClCompile Include="PlayerMoneyHUD.cpp" />
+    <ClCompile Include="TileMap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Interface.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerHealthHUD.h" />
+    <ClInclude Include="PlayerMoneyHUD.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Structs.h" />
+    <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
