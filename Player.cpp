@@ -7,11 +7,16 @@ Player::Player(SDL_Renderer* renderer, TTF_Font* font, Camera* camera)
 {
     initAnimations();
     src = { 0, 0, 48, 48 };
-    dest = { 200, 800, 64, 64 }; // Увеличено 2x
+    dest = { 200, 800, 96, 96 }; // Увеличено 2x
     speed = 5;
     currentHealth = 50;
     TotalHealth = 100;
     interface = new Interface(renderer, font, currentHealth, TotalHealth);
+    SDL_Texture* icon = IMG_LoadTexture(renderer, "assets/items/wood.png");
+    if (icon) {
+        interface->slots[0].icon = icon;
+        interface->slots[0].count = 99;
+    }
 }
 
 Player::~Player() {
@@ -21,25 +26,14 @@ Player::~Player() {
     delete interface;
 }
 
-void Player::loadAnimation(const std::string& name, const std::string& path, int frames, int delay) {
-    SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
-    if (tex) {
-        SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_NEAREST);
-        animations[name] = { tex, frames, delay };
-    }
-    else {
-        SDL_Log("Не удалось загрузить: %s", path.c_str());
-    }
-}
-
 void Player::initAnimations() {
     SDL_Texture* tex = nullptr;
 
     tex = IMG_LoadTexture(renderer, "assets/1 Woodcutter/Woodcutter_idle.png");
-    /*if (tex) {
+    if (tex) {
         SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_NEAREST);
         animations["idle"] = { tex, 4, 200 };
-    }*/
+    }
 
     tex = IMG_LoadTexture(renderer, "assets/1 Woodcutter/Woodcutter_walk.png");
     if (tex) {
@@ -101,25 +95,11 @@ void Player::attackHandler() {
 }
 
 void Player::moveHandler(const bool* keys) {
-
-
     isWalk = false;
     isRunning = false;
     defineLook(keys);
 
     int actualSpeed = speed;
-
-    auto checkCollision = [&](float nextX, float nextY) {
-        SDL_FRect next = dest;
-        next.x = nextX;
-        next.y = nextY;
-        for (const SDL_FRect& rect : *collisionRects)  // ✅ Правильно
-        {
-            if (SDL_HasRectIntersectionFloat(&next, &rect)) return true;
-        }
-        return false;
-        };
-
 
     if (keys[SDL_SCANCODE_LSHIFT]) {
         isRunning = true;
@@ -131,44 +111,25 @@ void Player::moveHandler(const bool* keys) {
         isjump = true;
     }
 
-    float newY = dest.y + velocityY;
-    if (velocityY > 0) { // падаем
-        if (!checkCollision(dest.x, newY)) {
-            dest.y = newY;
-            velocityY += gravity;
-        }
-        else {
-            // приземление
-            while (!checkCollision(dest.x, dest.y + 1)) {
-                dest.y += 1;
-            }
-            velocityY = 0;
-            isjump = false;
-        }
+    if (isjump) {
+        dest.y += velocityY;
+        velocityY += gravity;
+        currentAnim = "jump";
     }
-    else if (velocityY < 0) { // прыжок вверх
-        if (!checkCollision(dest.x, newY)) {
-            dest.y = newY;
-            velocityY += gravity;
-        }
-        else {
-            velocityY = 0;
-        }
+
+    if (dest.y >= 250) {
+        dest.y = 250;
+        isjump = false;
+        velocityY = 0;
     }
 
     if (keys[SDL_SCANCODE_A]) {
-        float newX = dest.x - actualSpeed;
-        if (!checkCollision(newX, dest.y)) {
-            dest.x = newX;
-        }
+        dest.x -= actualSpeed;
         flip = SDL_FLIP_HORIZONTAL;
         isWalk = true;
     }
     if (keys[SDL_SCANCODE_D]) {
-        float newX = dest.x + actualSpeed;
-        if (!checkCollision(newX, dest.y)) {
-            dest.x = newX;
-        }
+        dest.x += actualSpeed;
         flip = SDL_FLIP_NONE;
         isWalk = true;
     }
@@ -189,16 +150,20 @@ void Player::moveHandler(const bool* keys) {
 }
 
 
+void Player::setPosition(float x, float y) {
+    dest.x = x;
+    dest.y = y;
+}
+void Player::setCollisions(const std::vector<SDL_FRect>& rects) {
+    collisionRects = rects;
+}
+
+
 void Player::obnovleniepersa() {
     const bool* keys = SDL_GetKeyboardState(nullptr);
     moveHandler(keys);
     attackHandler();
     interface->obnovlenieHUD();
-}
-
-
-void Player::setCollisions(const std::vector<SDL_FRect>& rects) {
-    collisionRects = &rects;
 }
 
 void Player::obrabotkaklavish(SDL_Event* event) {
@@ -211,22 +176,3 @@ void Player::obrabotkaklavish(SDL_Event* event) {
         currentAnim = "idle";
     }
 }
-
-void Player::setPosition(float x, float y) {
-    dest.x = x;
-    dest.y = y;
-}
-
-bool Player::checkCollision(float nextX, float nextY) {
-    SDL_FRect next = dest;
-    next.x = nextX;
-    next.y = nextY;
-
-    if (!collisionRects) return false; // защита
-
-    for (const SDL_FRect& rect : *collisionRects) {
-        if (SDL_HasRectIntersectionFloat(&next, &rect)) return true;
-    }
-    return false;
-}
-

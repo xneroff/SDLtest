@@ -4,6 +4,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include "PlayerMoneyHUD.h"
 #include "PlayerHealthHUD.h"
+#include <vector>
 class Interface
 {
 public:
@@ -13,8 +14,10 @@ public:
     void otrisovka() const;
     void setMoney(int newMoney);
     void changeMoney();
+    InventorySlot slots[5];
 
 private:
+    SDL_Texture* slotTex = nullptr;
     PlayerMoneyHUD* playerMoneyHUD;
     PlayerHealthHUD* playerHealthHUD;
     SDL_Renderer* renderer;

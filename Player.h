@@ -1,9 +1,9 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 #include "Structs.h"
 #include "Animation.h"
 #include "Interface.h"
@@ -13,29 +13,29 @@ class Player {
 public:
     Player(SDL_Renderer* renderer, TTF_Font* font, Camera* camera);
     ~Player();
-    void loadAnimation(const std::string& name, const std::string& path, int frames, int delay);
 
-    void setPosition(float x, float y);
-    void setCollisions(const std::vector<SDL_FRect>& rects);
     void obrabotkaklavish(SDL_Event* event);
     void obnovleniepersa();
     void otrisovka();
+
+    void setPosition(float x, float y);
+    void setCollisions(const std::vector<SDL_FRect>& rects);
+
     SDL_FRect gedDest() { return dest; }
     void addMoney(int addedMoney);
 
 private:
-    bool checkCollision(float nextX, float nextY);
     void defineLook(const bool* keys);
     void attackHandler();
     void moveHandler(const bool* keys);
     void initAnimations();
 
-    const std::vector<SDL_FRect>* collisionRects = nullptr;
-
     SDL_Renderer* renderer;
     TTF_Font* font;
     Interface* interface;
     Camera* camera;
+
+    std::vector<SDL_FRect> collisionRects;
 
     std::map<std::string, AnimationSet> animations;
     std::string currentAnim = "idle";

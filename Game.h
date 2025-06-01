@@ -26,7 +26,7 @@ private:
 	Player* player = nullptr;
 	TTF_Font* font = nullptr;
 	MainMenu* menu = nullptr;
-	TileMap* tileMap;
+	TileMap* tileMap = nullptr;
 	Camera* camera;
 };
 

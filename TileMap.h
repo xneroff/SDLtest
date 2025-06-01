@@ -1,22 +1,19 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <json.hpp>
-#include <string>
 #include <vector>
-
-struct MapLayer {
-    std::string name;
-    std::vector<int> data;
-};
-
+#include <string>
 
 struct Tileset {
     int firstgid;
     int columns;
-    int tilecount;
-    int tileWidth;
-    int tileHeight;
+    int tileWidth, tileHeight;
     SDL_Texture* texture;
+};
+
+struct MapLayer {
+    std::string name;
+    std::vector<int> data;
 };
 
 class TileMap {
@@ -24,26 +21,22 @@ public:
     TileMap(SDL_Renderer* renderer);
     ~TileMap();
 
-    void renderLayer(SDL_Renderer* renderer, const SDL_FRect& camera, const std::string& layerName);
-
     bool loadFromFile(const std::string& path);
-    void render(SDL_Renderer* renderer, const SDL_FRect& camera);
-    const std::vector<SDL_FRect>& getCollisionRects() const;
+    void renderLayer(SDL_Renderer* renderer, const SDL_FRect& camera, const std::string& name);
     SDL_FPoint getSpawnPoint() const;
+    const std::vector<SDL_FRect>& getCollisionRects() const;
 
 private:
-    std::vector<MapLayer> layers;
-    SDL_FPoint spawnPoint{};
+
+    SDL_FPoint spawnPoint{ 0, 0 };
+
     SDL_Renderer* renderer;
-    int tileWidth = 0;
-    int tileHeight = 0;
-    int mapWidth = 0;
-    int mapHeight = 0;
-
-   // тайловые слои
     std::vector<Tileset> tilesets;
-    std::vector<SDL_FRect> collisionRects; // коллизии
+    std::vector<MapLayer> layers;
+    std::vector<SDL_FRect> collisionRects;
 
-    void loadTilesets(const std::string& mapFolder, const nlohmann::json& jsonTilesets);
+    int tileWidth = 0, tileHeight = 0, mapWidth = 0, mapHeight = 0;
+
+    void loadTilesets(const std::string& folder, const nlohmann::json& tilesetsJson);
     void loadCollisions(const nlohmann::json& layersJson);
 };

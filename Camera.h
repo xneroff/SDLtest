@@ -16,4 +16,3 @@ private:
     float screenW, screenH;
     float dzW, dzH;
 };
-

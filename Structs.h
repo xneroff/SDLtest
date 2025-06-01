@@ -7,3 +7,7 @@ struct AnimationSet {
     int frameCount;
     int frameDelay;
 };
+struct InventorySlot {
+    SDL_Texture* icon = nullptr;
+    int count = 0;
+};
