@@ -1,9 +1,10 @@
-﻿#include "MainMenu.h"
+﻿// MainMenu.cpp
+#include "MainMenu.h"
 #include <SDL3_ttf/SDL_ttf.h>
-MainMenu::MainMenu(SDL_Renderer* renderer, TTF_Font* font, SDL_Window* window)
-    : renderer(renderer), font(font), window(window)
-{
+#include <cstring>
 
+MainMenu::MainMenu(SDL_Renderer* renderer, TTF_Font* font, SDL_Window* window)
+    : renderer(renderer), font(font), window(window) {
 }
 
 MainMenu::~MainMenu() {}
@@ -23,14 +24,12 @@ void MainMenu::render() {
         renderButton({ centerX, 300.f, 200.f, 60.f }, "Windowed");
         renderButton({ centerX, 380.f, 200.f, 60.f }, "Fullscreen");
     }
-
     SDL_RenderPresent(renderer);
 }
 
-// ✅ исправлено: SDL_FRect
 void MainMenu::renderButton(const SDL_FRect& rect, const std::string& text) {
     SDL_SetRenderDrawColor(renderer, 100, 100, 255, 255);
-    SDL_RenderFillRect(renderer, &rect); // ✅ теперь типы совпадают
+    SDL_RenderFillRect(renderer, &rect);
 
     SDL_Color color = { 255, 255, 255, 255 };
     SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), strlen(text.c_str()), color);
@@ -38,10 +37,10 @@ void MainMenu::renderButton(const SDL_FRect& rect, const std::string& text) {
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
         if (texture) {
             SDL_FRect dst;
-            dst.w = surface->w;
-            dst.h = surface->h;
-            dst.x = static_cast<int>(rect.x + (rect.w - dst.w) / 2);
-            dst.y = static_cast<int>(rect.y + (rect.h - dst.h) / 2);
+            dst.w = static_cast<float>(surface->w);
+            dst.h = static_cast<float>(surface->h);
+            dst.x = rect.x + (rect.w - dst.w) / 2;
+            dst.y = rect.y + (rect.h - dst.h) / 2;
             SDL_RenderTexture(renderer, texture, nullptr, &dst);
             SDL_DestroyTexture(texture);
         }
@@ -56,8 +55,6 @@ void MainMenu::handleEvent(const SDL_Event& e, bool& resume, bool& quit) {
     float x = e.button.x;
     float y = e.button.y;
     if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-        float x = e.button.x;
-        float y = e.button.y;
         if (!showSettings) {
             if (x >= centerX && x <= centerX + 200.f && y >= 300.f && y <= 360.f) {
                 resume = true;
@@ -84,7 +81,3 @@ void MainMenu::handleEvent(const SDL_Event& e, bool& resume, bool& quit) {
         }
     }
 }
-
-
-
-

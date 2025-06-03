@@ -1,3 +1,4 @@
+// MainMenu.h
 #pragma once
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -11,8 +12,6 @@ public:
     void render();
     void handleEvent(const SDL_Event& e, bool& resume, bool& quit);
 private:
-    /*SDL_Color* colorText = { 255, 255, 255, 255 };*/
-  
     TTF_Font* font;
     SDL_Renderer* renderer;
     bool showSettings = false;

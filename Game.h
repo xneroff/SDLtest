@@ -1,4 +1,3 @@
-
 #pragma once
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -12,7 +11,7 @@ class Game
 {
 public:
 	Game();
-	~Game();	
+	~Game();
 	SDL_AppResult SDL_AppInit();
 	SDL_AppResult SDL_AppEvent(SDL_Event* event);
 	SDL_AppResult SDL_AppIterate();
@@ -29,4 +28,3 @@ private:
 	TileMap* tileMap = nullptr;
 	Camera* camera;
 };
-

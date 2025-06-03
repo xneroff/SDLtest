@@ -24,6 +24,12 @@ public:
     SDL_FRect gedDest() { return dest; }
     void addMoney(int addedMoney);
 
+    void takeDamage(int amount);
+    int getHealth() const;
+    bool isDead() const;
+    bool isAttacking() const;
+    bool readyToDealDamage() const;
+
 private:
     void defineLook(const bool* keys);
     void attackHandler();
@@ -45,6 +51,7 @@ private:
     SDL_FRect dest;
     SDL_FlipMode flip;
 
+    bool readyToHit = false;
     int speed;
     int currentHealth;
     int TotalHealth;

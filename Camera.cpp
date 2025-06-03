@@ -1,10 +1,10 @@
+// Camera.cpp
 #include "Camera.h"
 
 Camera::Camera(float screenWidth, float screenHeight, float deadZoneWidth, float deadZoneHeight)
     : screenW(screenWidth), screenH(screenHeight), dzW(deadZoneWidth), dzH(deadZoneHeight)
 {
     camera = { 0, 0, screenWidth, screenHeight };
-
     deadZone.w = deadZoneWidth;
     deadZone.h = deadZoneHeight;
     deadZone.x = camera.x + (camera.w - deadZone.w) / 2;

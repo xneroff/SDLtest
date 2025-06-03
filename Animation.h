@@ -1,3 +1,4 @@
+// Animation.h
 #pragma once
 #include <SDL3/SDL.h>
 #include "Structs.h"
@@ -8,7 +9,6 @@ public:
     ~Animation();
     void update(const AnimationSet& anim, SDL_FRect& src, int frameWidth);
     void reset();
-
 private:
     int currentFrame = 0;
     Uint64 lastUpdate = 0;

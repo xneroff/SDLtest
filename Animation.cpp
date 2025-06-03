@@ -1,10 +1,10 @@
-
+// Animation.cpp
 #include "Animation.h"
+#include <SDL3/SDL.h>
+
 Animation::Animation() {}
 
-Animation::~Animation()
-{
-}
+Animation::~Animation() {}
 
 void Animation::reset() {
     currentFrame = 0;
