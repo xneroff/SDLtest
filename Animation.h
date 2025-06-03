@@ -1,4 +1,4 @@
-// Animation.h
+
 #pragma once
 #include <SDL3/SDL.h>
 #include "Structs.h"

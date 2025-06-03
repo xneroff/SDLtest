@@ -20,6 +20,8 @@ SDL_AppResult Game::SDL_AppInit() {
     camera = new Camera(1920, 1080, 400, 200);
     tileMap = new TileMap(renderer);
     tileMap->loadFromFile("assets/map/MEGATEST.json");
+    tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 1");
+    tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 2");
 
     enemies.push_back(new Enemy(renderer, 600, 800));
     enemies.push_back(new Enemy(renderer, 1200, 800));
@@ -28,6 +30,7 @@ SDL_AppResult Game::SDL_AppInit() {
     player = new Player(renderer, font, camera);
 
     player->setCollisions(tileMap->getCollisionRects());
+
     SDL_FPoint spawn = tileMap->getSpawnPoint();
     player->setPosition(spawn.x, spawn.y);
     menu = new MainMenu(renderer, font, window);
@@ -70,8 +73,8 @@ SDL_AppResult Game::SDL_AppIterate() {
     }
     else {
         camera->update(player->gedDest());
-        tileMap->renderLayer(renderer, camera->getView(), u8"Слой тайлов 1");
-        tileMap->renderLayer(renderer, camera->getView(), u8"Слой тайлов 2");
+        tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 1");
+        tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 2");
 
         Uint32 now = SDL_GetTicks();
 

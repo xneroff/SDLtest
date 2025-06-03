@@ -131,13 +131,18 @@ void Player::moveHandler(const bool* keys) {
         dest.y += velocityY;
         velocityY += gravity;
         currentAnim = "jump";
+
+        // Проверяем, если игрок столкнулся с землёй
+        for (const auto& rect : collisionRects) {
+            if (SDL_HasRectIntersectionFloat(&dest, &rect)) {
+                dest.y = rect.y - dest.h; // Приземляем игрока
+                isjump = false;
+                velocityY = 0;
+                currentAnim = "idle";
+            }
+        }
     }
 
-    if (dest.y >= 800) {
-        dest.y = 800;
-        isjump = false;
-        velocityY = 0;
-    }
 
     if (keys[SDL_SCANCODE_A]) {
         dest.x -= actualSpeed;
