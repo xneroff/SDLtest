@@ -20,8 +20,13 @@ SDL_AppResult Game::SDL_AppInit() {
     camera = new Camera(1920, 1080, 400, 200);
     tileMap = new TileMap(renderer);
     tileMap->loadFromFile("assets/map/MEGATEST.json");
+    
+
     tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 1");
     tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 2");
+    tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 3");
+    tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 4");
+    tileMap->renderLayer(renderer, camera->getView(), "Tile Layer 5");
 
     enemies.push_back(new Enemy(renderer, 600, 800));
     enemies.push_back(new Enemy(renderer, 1200, 800));
@@ -30,6 +35,8 @@ SDL_AppResult Game::SDL_AppInit() {
     player = new Player(renderer, font, camera);
 
     player->setCollisions(tileMap->getCollisionRects());
+    player->setPosition(tileMap->getSpawnPoint().x, tileMap->getSpawnPoint().y);
+
 
     SDL_FPoint spawn = tileMap->getSpawnPoint();
     player->setPosition(spawn.x, spawn.y);
@@ -73,8 +80,13 @@ SDL_AppResult Game::SDL_AppIterate() {
     }
     else {
         camera->update(player->gedDest());
+
         tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 1");
         tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 2");
+        tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 3");
+        tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 4");
+        tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 5");
+        
 
         Uint32 now = SDL_GetTicks();
 

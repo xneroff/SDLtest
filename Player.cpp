@@ -155,6 +155,22 @@ void Player::moveHandler(const bool* keys) {
         isWalk = true;
     }
 
+    bool isOnGround = false;
+
+    // Проверяем, есть ли платформа под игроком
+    for (const auto& rect : collisionRects) {
+        if (dest.y + dest.h >= rect.y && dest.y + dest.h <= rect.y + 5 && // 5 пикселей допуска
+            dest.x + dest.w >= rect.x && dest.x <= rect.x + rect.w) {
+            isOnGround = true;
+            break;
+        }
+    }
+
+    // Если игрок не стоит на платформе и не прыгает, он должен падать
+    if (!isOnGround && !isjump) {
+        isjump = true;
+    }
+
     if (!isAttack) {
         if (isjump) {
             currentAnim = "jump";
