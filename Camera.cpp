@@ -1,37 +1,36 @@
-// Camera.cpp
 #include "Camera.h"
 
-Camera::Camera(float screenWidth, float screenHeight, float deadZoneWidth, float deadZoneHeight)
-    : screenW(screenWidth), screenH(screenHeight), dzW(deadZoneWidth), dzH(deadZoneHeight)
+Camera::Camera(float screenWidth, float screenHeight)
+    : screenW(screenWidth), screenH(screenHeight)
 {
+    float zoomFactor = 5.0f; // Уменьшаем поле зрения камеры (можно регулировать)
+    /*camera = { 0, 0, screenWidth * zoomFactor, screenHeight * zoomFactor };*/
     camera = { 0, 0, screenWidth, screenHeight };
-    deadZone.w = deadZoneWidth;
-    deadZone.h = deadZoneHeight;
-    deadZone.x = camera.x + (camera.w - deadZone.w) / 2;
-    deadZone.y = camera.y + (camera.h - deadZone.h) / 2;
 }
 
 Camera::~Camera() {}
 
-void Camera::update(const SDL_FRect& player) {
-    if (player.x < deadZone.x) {
-        camera.x -= deadZone.x - player.x;
-    }
-    else if (player.x + player.w > deadZone.x + deadZone.w) {
-        camera.x += (player.x + player.w) - (deadZone.x + deadZone.w);
-    }
+void Camera::update(const SDL_FRect& player, float mapWidth, float mapHeight) {
+    float smoothing = 0.08f; // Плавность движения камеры
 
-    if (player.y < deadZone.y) {
-        camera.y -= deadZone.y - player.y;
-    }
-    else if (player.y + player.h > deadZone.y + deadZone.h) {
-        camera.y += (player.y + player.h) - (deadZone.y + deadZone.h);
-    }
+    // Центрируем камеру на игроке
+    float targetX = player.x + player.w / 2 - camera.w / 2;
+    float targetY = player.y + player.h / 2 - camera.h / 2;
 
-    // Обновляем позицию deadZone
-    deadZone.x = camera.x + (camera.w - deadZone.w) / 2;
-    deadZone.y = camera.y + (camera.h - deadZone.h) / 2;
+    // Ограничение камеры, чтобы она не выходила за пределы карты
+    float maxX = mapWidth * 32 - camera.w; // 32 - размер тайла
+    float maxY = mapHeight * 32 - camera.h;
+
+    camera.x += (targetX - camera.x) * smoothing;
+    camera.y += (targetY - camera.y) * smoothing;
+
+    // Ограничение движения камеры
+    if (camera.x < 0) camera.x = 0;
+    if (camera.y < 0) camera.y = 0;
+    if (camera.x > maxX) camera.x = maxX;
+    if (camera.y > maxY) camera.y = maxY;
 }
+
 
 SDL_FRect Camera::apply(const SDL_FRect& worldRect) const {
     return SDL_FRect{
