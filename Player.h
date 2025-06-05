@@ -31,6 +31,11 @@ public:
     bool readyToDealDamage() const;
 
 private:
+
+    SDL_FRect hitbox;
+    void updateHitbox();
+    bool isOnGround = false;
+
     void defineLook(const bool* keys);
     void attackHandler();
     void moveHandler(const bool* keys);

@@ -75,8 +75,15 @@ void Player::otrisovka() {
     const AnimationSet& anim = animations[currentAnim];
     SDL_FRect screenDest = camera->apply(dest);
     SDL_RenderTextureRotated(renderer, anim.texture, &src, &screenDest, 0, nullptr, flip);
+
     interface->otrisovka();
+
+    // Хитбокс — красный прямоугольник
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 120);
+    SDL_FRect screenHitbox = camera->apply(hitbox);
+    SDL_RenderRect(renderer, &screenHitbox);
 }
+
 
 void Player::addMoney(int addedMoney) {
     money += addedMoney;
@@ -99,15 +106,29 @@ void Player::defineLook(const bool* keys) {
 
 void Player::attackHandler() {
     if (isAttack) {
-        currentAnim = "attack";
+        if (currentAnim != "attack") {
+            currentAnim = "attack";
+            animationHandler.reset();
+        }
+
         animationHandler.update(animations[currentAnim], src, (int)src.w);
+
         int frameIndex = static_cast<int>(src.x / src.w);
         readyToHit = (frameIndex >= animations[currentAnim].frameCount - 1);
-
     }
     else {
         readyToHit = false;
     }
+}
+
+
+
+
+void Player::updateHitbox() {
+    hitbox.x = dest.x + 16;
+    hitbox.y = dest.y + 16;
+    hitbox.w = dest.w - 32;
+    hitbox.h = dest.h - 20;
 }
 
 void Player::moveHandler(const bool* keys) {
@@ -116,34 +137,13 @@ void Player::moveHandler(const bool* keys) {
     defineLook(keys);
 
     int actualSpeed = speed;
-
     if (keys[SDL_SCANCODE_LSHIFT]) {
         isRunning = true;
         actualSpeed = speed * 2;
     }
 
-    if (keys[SDL_SCANCODE_SPACE] && !isjump) {
-        velocityY = sila_prizhka;
-        isjump = true;
-    }
-
-    if (isjump) {
-        dest.y += velocityY;
-        velocityY += gravity;
-        currentAnim = "jump";
-
-        // Проверяем, если игрок столкнулся с землёй
-        for (const auto& rect : collisionRects) {
-            if (SDL_HasRectIntersectionFloat(&dest, &rect)) {
-                dest.y = rect.y - dest.h; // Приземляем игрока
-                isjump = false;
-                velocityY = 0;
-                currentAnim = "idle";
-            }
-        }
-    }
-
-
+    // Горизонтальное движение с коллизией
+    float oldX = dest.x;
     if (keys[SDL_SCANCODE_A]) {
         dest.x -= actualSpeed;
         flip = SDL_FLIP_HORIZONTAL;
@@ -155,23 +155,49 @@ void Player::moveHandler(const bool* keys) {
         isWalk = true;
     }
 
-    bool isOnGround = false;
-
-    // Проверяем, есть ли платформа под игроком
+    updateHitbox();
     for (const auto& rect : collisionRects) {
-        if (dest.y + dest.h >= rect.y && dest.y + dest.h <= rect.y + 5 && // 5 пикселей допуска
-            dest.x + dest.w >= rect.x && dest.x <= rect.x + rect.w) {
-            isOnGround = true;
+        if (SDL_HasRectIntersectionFloat(&hitbox, &rect)) {
+            dest.x = oldX; // откат назад
             break;
         }
     }
 
-    // Если игрок не стоит на платформе и не прыгает, он должен падать
-    if (!isOnGround && !isjump) {
+    // Прыжок
+    if (keys[SDL_SCANCODE_SPACE] && isOnGround) {
+        velocityY = sila_prizhka;
         isjump = true;
+        isOnGround = false;
     }
 
+    // Применение гравитации
+    velocityY += gravity;
+    dest.y += velocityY;
+
+    updateHitbox();
+    isOnGround = false;
+    for (const auto& rect : collisionRects) {
+        if (SDL_HasRectIntersectionFloat(&hitbox, &rect)) {
+            // приземлились сверху
+            if (velocityY > 0 && hitbox.y + hitbox.h <= rect.y + velocityY) {
+                dest.y = rect.y - dest.h;
+                velocityY = 0;
+                isjump = false;
+                isOnGround = true;
+            }
+            else if (velocityY < 0) {
+                dest.y = rect.y + rect.h;
+                velocityY = 0;
+            }
+            break;
+        }
+    }
+
+    std::string prevAnim = currentAnim;
+
     if (!isAttack) {
+        std::string previousAnim = currentAnim;
+
         if (isjump) {
             currentAnim = "jump";
         }
@@ -181,14 +207,29 @@ void Player::moveHandler(const bool* keys) {
         else {
             currentAnim = "idle";
         }
+
+        if (currentAnim != previousAnim) {
+            animationHandler.reset();
+        }
+
         animationHandler.update(animations[currentAnim], src, (int)src.w);
     }
+
+
+
+    updateHitbox();
 }
+
+
+
+
 
 void Player::setPosition(float x, float y) {
     dest.x = x;
     dest.y = y;
+    updateHitbox();
 }
+
 
 void Player::setCollisions(const std::vector<SDL_FRect>& rects) {
     collisionRects = rects;
