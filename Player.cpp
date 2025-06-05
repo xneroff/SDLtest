@@ -104,21 +104,27 @@ void Player::defineLook(const bool* keys) {
     }
 }
 
+
+void Player::setAnim(const std::string& animName) {
+    if (currentAnim != animName) {
+        currentAnim = animName;
+        animationHandler.reset();
+    }
+}
+
+
 void Player::attackHandler() {
     if (isAttack) {
-        if (currentAnim != "attack") {
-            currentAnim = "attack";
-            animationHandler.reset();
-        }
-
+        currentAnim = "attack";
         animationHandler.update(animations[currentAnim], src, (int)src.w);
-
         int frameIndex = static_cast<int>(src.x / src.w);
         readyToHit = (frameIndex >= animations[currentAnim].frameCount - 1);
+
     }
     else {
         readyToHit = false;
     }
+
 }
 
 
@@ -196,8 +202,6 @@ void Player::moveHandler(const bool* keys) {
     std::string prevAnim = currentAnim;
 
     if (!isAttack) {
-        std::string previousAnim = currentAnim;
-
         if (isjump) {
             currentAnim = "jump";
         }
@@ -207,13 +211,9 @@ void Player::moveHandler(const bool* keys) {
         else {
             currentAnim = "idle";
         }
-
-        if (currentAnim != previousAnim) {
-            animationHandler.reset();
-        }
-
         animationHandler.update(animations[currentAnim], src, (int)src.w);
     }
+
 
 
 

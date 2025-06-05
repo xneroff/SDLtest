@@ -31,7 +31,7 @@ public:
     bool readyToDealDamage() const;
 
 private:
-
+    void setAnim(const std::string& animName);
     SDL_FRect hitbox;
     void updateHitbox();
     bool isOnGround = false;
