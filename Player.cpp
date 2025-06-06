@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include <SDL3_image/SDL_image.h>
 #include <vector>
+#include <iostream>
 
 
 Player::Player(SDL_Renderer* renderer, TTF_Font* font, Camera* camera)
@@ -8,7 +9,7 @@ Player::Player(SDL_Renderer* renderer, TTF_Font* font, Camera* camera)
 {
     initAnimations();
     src = { 0, 0, 48, 48 };
-    dest = { 200, 800, 96, 96 }; // Увеличено 2x
+    dest = { 200, 800, 86, 86 }; // Увеличено 2x
     speed = 5;
     currentHealth = 100;
     TotalHealth = 100;
@@ -131,11 +132,13 @@ void Player::attackHandler() {
 
 
 void Player::updateHitbox() {
-    hitbox.x = dest.x + 16;
-    hitbox.y = dest.y + 16;
-    hitbox.w = dest.w - 32;
-    hitbox.h = dest.h - 20;
+  
+    hitbox.x = dest.x;  // В обычном состоянии хитбокс = персонаж
+    hitbox.w = dest.w;
+    hitbox.y = dest.y;
+    hitbox.h = dest.h - 7;  // Высота хитбокса полностью совпадает с `dest.h`
 }
+
 
 void Player::moveHandler(const bool* keys) {
     isWalk = false;
@@ -173,7 +176,7 @@ void Player::moveHandler(const bool* keys) {
     if (keys[SDL_SCANCODE_SPACE] && isOnGround) {
         velocityY = sila_prizhka;
         isjump = true;
-        isOnGround = false;
+        /*isOnGround = false;*/
     }
 
     // Применение гравитации
@@ -181,23 +184,34 @@ void Player::moveHandler(const bool* keys) {
     dest.y += velocityY;
 
     updateHitbox();
+    bool wasOnGround = isOnGround; // Запоминаем состояние до проверки
     isOnGround = false;
+
     for (const auto& rect : collisionRects) {
         if (SDL_HasRectIntersectionFloat(&hitbox, &rect)) {
-            // приземлились сверху
-            if (velocityY > 0 && hitbox.y + hitbox.h <= rect.y + velocityY) {
+            // Проверяем, если персонаж падает и достигает платформы
+            if (velocityY > 0 && hitbox.y + hitbox.h - velocityY <= rect.y) {
                 dest.y = rect.y - dest.h;
                 velocityY = 0;
                 isjump = false;
                 isOnGround = true;
             }
-            else if (velocityY < 0) {
+            else if (velocityY < 0 && hitbox.y - velocityY >= rect.y + rect.h) {
                 dest.y = rect.y + rect.h;
                 velocityY = 0;
             }
             break;
         }
     }
+
+    // ✅ Окончательно фиксируем положение
+    if (wasOnGround && isOnGround) {
+        velocityY = 0; // Если уже на земле, не трогаем `velocityY`
+    }
+
+    std::cout << "🔄 Player Y: " << dest.y << " | velocityY: " << velocityY
+        << " | isOnGround: " << isOnGround << std::endl;
+
 
     std::string prevAnim = currentAnim;
 
@@ -226,9 +240,12 @@ void Player::moveHandler(const bool* keys) {
 
 void Player::setPosition(float x, float y) {
     dest.x = x;
-    dest.y = y;
+    dest.y = y - dest.h; // Смещаем вниз, чтобы не оказаться ВНУТРИ блока
     updateHitbox();
 }
+
+
+
 
 
 void Player::setCollisions(const std::vector<SDL_FRect>& rects) {

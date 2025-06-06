@@ -130,8 +130,9 @@
 
             for (const auto& obj : layer["objects"]) {
                 if (obj.contains("name") && obj["name"] == "Spawn") {
-                    spawnPoint.x = obj["x"];
-                    spawnPoint.y = obj["y"] - 32;
+                    spawnPoint.x = obj["x"].get<float>();
+                    spawnPoint.y = obj["y"].get<float>(); // Убираем "-32", если оно мешает
+
                     std::cout << "Player spawn point: (" << spawnPoint.x << ", " << spawnPoint.y << ")\n";
                 }
                 else {
