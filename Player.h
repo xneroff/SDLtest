@@ -8,6 +8,10 @@
 #include "Animation.h"
 #include "Interface.h"
 #include "Camera.h"
+#include "Inventory.h"
+
+
+
 
 class Player {
 public:
@@ -31,11 +35,12 @@ public:
     bool readyToDealDamage() const;
 
 private:
+    void addItemToInventory(const std::string& name, SDL_Texture* icon, int quantity);
     void setAnim(const std::string& animName);
     SDL_FRect hitbox;
     void updateHitbox();
     bool isOnGround = false;
-
+    bool inventoryOpen = false;
     void defineLook(const bool* keys);
     void attackHandler();
     void moveHandler(const bool* keys);
@@ -45,6 +50,7 @@ private:
     TTF_Font* font;
     Interface* interface;
     Camera* camera;
+    Inventory* inventory;
 
     std::vector<SDL_FRect> collisionRects;
 

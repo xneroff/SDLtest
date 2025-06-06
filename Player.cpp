@@ -14,6 +14,11 @@ Player::Player(SDL_Renderer* renderer, TTF_Font* font, Camera* camera)
     currentHealth = 100;
     TotalHealth = 100;
     interface = new Interface(renderer, font, currentHealth, TotalHealth);
+    inventory = new Inventory(renderer);
+    SDL_Texture* testItem = IMG_LoadTexture(renderer, "assets/icons/test_item.png");
+    inventory->addItem("Test Item", testItem, 1);
+
+
 }
 
 Player::~Player() {
@@ -78,6 +83,9 @@ void Player::otrisovka() {
     SDL_RenderTextureRotated(renderer, anim.texture, &src, &screenDest, 0, nullptr, flip);
 
     interface->otrisovka();
+    if (inventoryOpen) {
+        inventory->render(renderer);
+    }
 
     // Хитбокс — красный прямоугольник
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 120);
@@ -92,6 +100,8 @@ void Player::addMoney(int addedMoney) {
 }
 
 void Player::defineLook(const bool* keys) {
+    bool wasFlipped = (flip == SDL_FLIP_HORIZONTAL); // Запоминаем предыдущее состояние
+
     if (keys[SDL_SCANCODE_A]) {
         flip = SDL_FLIP_HORIZONTAL;
         currentAnim = "walk";
@@ -103,7 +113,13 @@ void Player::defineLook(const bool* keys) {
     else {
         currentAnim = "idle";
     }
+
+    // ✅ Если `flip` изменился, корректируем `dest.x`, чтобы персонаж не смещался
+    if (wasFlipped != (flip == SDL_FLIP_HORIZONTAL)) {
+        dest.x += (flip == SDL_FLIP_HORIZONTAL) ? -20 : 20; // Коррекция смещения
+    }
 }
+
 
 
 void Player::setAnim(const std::string& animName) {
@@ -131,15 +147,28 @@ void Player::attackHandler() {
 
 
 
+//void Player::updateHitbox() {
+//    hitbox.w = dest.w - 50; // ✅ Уменьшаем ширину
+//    hitbox.h = dest.h - +25;  // ✅ Чуть уменьшаем высоту
+//
+//    // 🏷 Смещаем хитбокс так, чтобы он остался по центру персонажа
+//    hitbox.x = dest.x + 15;
+//    hitbox.y = dest.y + 20;
+//}
 void Player::updateHitbox() {
-  
-    hitbox.x = dest.x;  // В обычном состоянии хитбокс = персонаж
-    hitbox.w = dest.w;
-    hitbox.y = dest.y;
-    hitbox.h = dest.h - 7;  // Высота хитбокса полностью совпадает с `dest.h`
+    hitbox.w = dest.w - 50; // ✅ Уменьшаем ширину
+    hitbox.h = dest.h - 25; // ✅ Чуть уменьшаем высоту
+    hitbox.y = dest.y + 20; // ✅ Оставляем одинаковую высоту
+
+    if (flip == SDL_FLIP_HORIZONTAL) {
+        hitbox.x = dest.x + 35; // ✅ Смещаем влево при повороте
+    }
+    else {
+        hitbox.x = dest.x + 15; // ✅ Оставляем как есть при движении вправо
+    }
+
 }
-
-
+    
 void Player::moveHandler(const bool* keys) {
     isWalk = false;
     isRunning = false;
@@ -180,7 +209,10 @@ void Player::moveHandler(const bool* keys) {
     }
 
     // Применение гравитации
-    velocityY += gravity;
+    if (!isOnGround) { // Гравитация только если персонаж НЕ стоит на земле
+        velocityY += gravity;
+    }
+
     dest.y += velocityY;
 
     updateHitbox();
@@ -191,23 +223,20 @@ void Player::moveHandler(const bool* keys) {
         if (SDL_HasRectIntersectionFloat(&hitbox, &rect)) {
             // Проверяем, если персонаж падает и достигает платформы
             if (velocityY > 0 && hitbox.y + hitbox.h - velocityY <= rect.y) {
-                dest.y = rect.y - dest.h;
-                velocityY = 0;
+                dest.y = rect.y - dest.h;   
                 isjump = false;
                 isOnGround = true;
             }
             else if (velocityY < 0 && hitbox.y - velocityY >= rect.y + rect.h) {
                 dest.y = rect.y + rect.h;
-                velocityY = 0;
+                
             }
             break;
         }
     }
 
     // ✅ Окончательно фиксируем положение
-    if (wasOnGround && isOnGround) {
-        velocityY = 0; // Если уже на земле, не трогаем `velocityY`
-    }
+  
 
     std::cout << "🔄 Player Y: " << dest.y << " | velocityY: " << velocityY
         << " | isOnGround: " << isOnGround << std::endl;
@@ -229,6 +258,7 @@ void Player::moveHandler(const bool* keys) {
     }
 
 
+    
 
 
     updateHitbox();
@@ -244,10 +274,6 @@ void Player::setPosition(float x, float y) {
     updateHitbox();
 }
 
-
-
-
-
 void Player::setCollisions(const std::vector<SDL_FRect>& rects) {
     collisionRects = rects;
 }
@@ -261,6 +287,7 @@ void Player::obnovleniepersa() {
     interface->obnovlenieHUD();
 }
 
+    
 void Player::obrabotkaklavish(SDL_Event* event) {
     if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == SDL_BUTTON_LEFT) {
         isAttack = true;
@@ -269,6 +296,11 @@ void Player::obrabotkaklavish(SDL_Event* event) {
     if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT) {
         isAttack = false;
         currentAnim = "idle";
+    }
+
+    if (event->type == SDL_EVENT_KEY_DOWN && event->key.key == SDLK_I) {
+        inventoryOpen = !inventoryOpen;
+        std::cout << "📦 Inventory status: " << (inventoryOpen ? "OPEN" : "CLOSED") << std::endl;
     }
 }
 
@@ -287,6 +319,12 @@ void Player::takeDamage(int amount) {
     animationHandler.reset();
     interface->setHealth(currentHealth);
 }
+
+
+void Player::addItemToInventory(const std::string& name, SDL_Texture* icon, int quantity) {
+    inventory->addItem(name, icon, quantity);
+}
+
 
 bool Player::isAttacking() const {
     return isAttack;

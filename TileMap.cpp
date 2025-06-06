@@ -142,6 +142,8 @@
                 }
             }
         }
+        std::cout << "✅ Total collisions loaded: " << collisionRects.size() << std::endl;
+
     }
 
 
