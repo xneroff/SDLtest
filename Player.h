@@ -35,7 +35,6 @@ public:
     bool readyToDealDamage() const;
 
 private:
-    void addItemToInventory(const std::string& name, SDL_Texture* icon, int quantity);
     void setAnim(const std::string& animName);
     SDL_FRect hitbox;
     void updateHitbox();

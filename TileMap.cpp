@@ -50,24 +50,20 @@
 
         for (const auto& layer : layers) {
             if (layer.name != name) continue;
-
             for (int y = 0; y < mapHeight; ++y) {
                 for (int x = 0; x < mapWidth; ++x) {
                     int tileID = layer.data[y * mapWidth + x];
                     if (tileID == 0) continue;
-
                     const Tileset* ts = nullptr;
                     for (const auto& tileset : tilesets) {
                         if (tileID >= tileset.firstgid) ts = &tileset;
                     }
                     if (!ts || !ts->texture) continue;
-
                     SDL_FRect src = {
                         (tileID - ts->firstgid) % ts->columns * 32,
                         (tileID - ts->firstgid) / ts->columns * 32,
                         32, 32
                     };
-
                     dest.x = x * 32 - camera.x;
                     dest.y = y * 32 - camera.y;
                     SDL_RenderTexture(renderer, ts->texture, &src, &dest);

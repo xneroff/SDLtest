@@ -25,15 +25,20 @@
             "scaleInEditor": 1
         },
         "MEGATEST.tmx": {
-            "scale": 0.33,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 801.5151515151513,
-                "y": 639.3939393939395
+                "x": 360,
+                "y": 1066
             }
         },
         "Medieval_props_free.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Medieval_tiles_free2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Tileset.tsx": {
             "dynamicWrapping": false,
@@ -56,7 +61,9 @@
             "scaleInEditor": 1
         },
         "grass.tsx": {
-            "dynamicWrapping": true
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "kamen'.tsx": {
             "scaleInDock": 1,
@@ -92,22 +99,26 @@
     "map.width": 50,
     "openFiles": [
         "MEGATEST.tmx",
-        "origbig.tsx"
+        "origbig.tsx",
+        "Medieval_props_free.tsx",
+        "Medieval_tiles_free2.tsx",
+        "Tileset.tsx",
+        "grass.tsx"
     ],
     "project": "MEGATEST.tiled-project",
     "recentFiles": [
-        "kamen'.tsx",
-        "Background.tsx",
+        "grass.tsx",
+        "Tileset.tsx",
+        "Medieval_tiles_free2.tsx",
+        "Medieval_props_free.tsx",
         "origbig.tsx",
         "MEGATEST.tmx",
+        "kamen'.tsx",
+        "Background.tsx",
         "treed.tsx",
         "FONS.tsx",
-        "Tileset.tsx",
         "objects.tsx",
-        "market.tsx",
-        "bloki.tsx",
-        "background.tsx",
-        "blocki.tsx"
+        "market.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.type": 1

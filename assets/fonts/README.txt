@@ -1,23 +1,21 @@
-Orbitron Variable Font
-======================
+Pixelify Sans Variable Font
+===========================
 
-This download contains Orbitron as both a variable font and static fonts.
+This download contains Pixelify Sans as both a variable font and static fonts.
 
-Orbitron is a variable font with this axis:
+Pixelify Sans is a variable font with this axis:
   wght
 
 This means all the styles are contained in a single file:
-  Orbitron-VariableFont_wght.ttf
+  PixelifySans-VariableFont_wght.ttf
 
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
-in those cases you can use the static font files for Orbitron:
-  static/Orbitron-Regular.ttf
-  static/Orbitron-Medium.ttf
-  static/Orbitron-SemiBold.ttf
-  static/Orbitron-Bold.ttf
-  static/Orbitron-ExtraBold.ttf
-  static/Orbitron-Black.ttf
+in those cases you can use the static font files for Pixelify Sans:
+  static/PixelifySans-Regular.ttf
+  static/PixelifySans-Medium.ttf
+  static/PixelifySans-SemiBold.ttf
+  static/PixelifySans-Bold.ttf
 
 Get started
 -----------

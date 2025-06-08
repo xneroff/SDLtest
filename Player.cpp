@@ -9,16 +9,14 @@ Player::Player(SDL_Renderer* renderer, TTF_Font* font, Camera* camera)
 {
     initAnimations();
     src = { 0, 0, 48, 48 };
-    dest = { 200, 800, 86, 86 }; // Увеличено 2x
+    dest = { 0, 0, 86, 86 }; // Увеличено 2x
     speed = 5;
     currentHealth = 100;
     TotalHealth = 100;
     interface = new Interface(renderer, font, currentHealth, TotalHealth);
     inventory = new Inventory(renderer);
-    SDL_Texture* testItem = IMG_LoadTexture(renderer, "assets/icons/test_item.png");
-    inventory->addItem("Test Item", testItem, 1);
-
-
+    inventory->addItem("Topor", "assets/MoiInventory/Topor.png");
+    inventory->addItem("eda", "assets/MoiInventory/eda.png");
 }
 
 Player::~Player() {
@@ -84,7 +82,7 @@ void Player::otrisovka() {
 
     interface->otrisovka();
     if (inventoryOpen) {
-        inventory->render(renderer);
+        inventory->render();
     }
 
     // Хитбокс — красный прямоугольник
@@ -180,20 +178,25 @@ void Player::moveHandler(const bool* keys) {
         actualSpeed = speed * 2;
     }
 
-    // Горизонтальное движение с коллизией
+    bool moveLeft = keys[SDL_SCANCODE_A];
+    bool moveRight = keys[SDL_SCANCODE_D];
+    
     float oldX = dest.x;
-    if (keys[SDL_SCANCODE_A]) {
+
+    if (moveLeft && !moveRight) {
         dest.x -= actualSpeed;
         flip = SDL_FLIP_HORIZONTAL;
         isWalk = true;
     }
-    if (keys[SDL_SCANCODE_D]) {
+    else if (moveRight && !moveLeft) {
         dest.x += actualSpeed;
         flip = SDL_FLIP_NONE;
         isWalk = true;
     }
+    else {
+        isWalk = false;
+    }
 
-    updateHitbox();
     for (const auto& rect : collisionRects) {
         if (SDL_HasRectIntersectionFloat(&hitbox, &rect)) {
             dest.x = oldX; // откат назад
@@ -235,13 +238,6 @@ void Player::moveHandler(const bool* keys) {
         }
     }
 
-    // ✅ Окончательно фиксируем положение
-  
-
-    std::cout << "🔄 Player Y: " << dest.y << " | velocityY: " << velocityY
-        << " | isOnGround: " << isOnGround << std::endl;
-
-
     std::string prevAnim = currentAnim;
 
     if (!isAttack) {
@@ -260,7 +256,7 @@ void Player::moveHandler(const bool* keys) {
 
     
 
-
+    
     updateHitbox();
 }
 
@@ -289,20 +285,30 @@ void Player::obnovleniepersa() {
 
     
 void Player::obrabotkaklavish(SDL_Event* event) {
-    if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == SDL_BUTTON_LEFT) {
-        isAttack = true;
-        animationHandler.reset();
+    if (inventoryOpen) {
+        inventory->handleEvent(event);  // Перетаскивание работает
     }
+
+    if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == SDL_BUTTON_LEFT) {
+        if (!inventoryOpen) { // 🚫 Не атакуем, если инвентарь открыт
+            isAttack = true;
+            animationHandler.reset();
+        }
+    }
+
     if (event->type == SDL_EVENT_MOUSE_BUTTON_UP && event->button.button == SDL_BUTTON_LEFT) {
         isAttack = false;
         currentAnim = "idle";
     }
 
+    // ✅ Переключение инвентаря по клавише I
     if (event->type == SDL_EVENT_KEY_DOWN && event->key.key == SDLK_I) {
         inventoryOpen = !inventoryOpen;
         std::cout << "📦 Inventory status: " << (inventoryOpen ? "OPEN" : "CLOSED") << std::endl;
     }
 }
+
+
 
 void Player::takeDamage(int amount) {
     if (currentHealth <= 0) return;
@@ -318,11 +324,6 @@ void Player::takeDamage(int amount) {
 
     animationHandler.reset();
     interface->setHealth(currentHealth);
-}
-
-
-void Player::addItemToInventory(const std::string& name, SDL_Texture* icon, int quantity) {
-    inventory->addItem(name, icon, quantity);
 }
 
 

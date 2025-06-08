@@ -1,60 +1,166 @@
-#include "Inventory.h"
-#include <SDL3_image/SDL_image.h>
+﻿#include "Inventory.h"
+#include <iostream>
 
 Inventory::Inventory(SDL_Renderer* renderer) : renderer(renderer) {
-    inventoryBackground = IMG_LoadTexture(renderer, "assets/ui/inventory_bg.png");
-    int startX = (1920 - 1000) / 2 + 50;
-    int startY = (1080 - 800) / 2 + 50;
-    int cellSize = 64;
-    int spacing = 10;
-    int columns = 5;
+    background = IMG_LoadTexture(renderer, "assets/MoiInventory/Inventory_style_02d.png");
+    SDL_SetTextureScaleMode(background, SDL_SCALEMODE_NEAREST);
+    slotHighlight = IMG_LoadTexture(renderer, "assets/MoiInventory/Inventory_select.png");
+    SDL_SetTextureScaleMode(slotHighlight, SDL_SCALEMODE_NEAREST);
+    
 
-    for (int i = 0; i < 20; ++i) {
-        int x = startX + (i % columns) * (cellSize + spacing);
-        int y = startY + (i / columns) * (cellSize + spacing);
-        SDL_FRect slot = { x, y, cellSize, cellSize };
-        itemSlots.push_back(slot);
+    // Центр инвентаря
+    inventoryRect = { 554, 306, 812, 468 };  // 203x117 * 4
 
+    // Слоты (абсолютные позиции под фон)
+    slots = {
+        {586, 338, 64, 64}, {662, 338, 64, 64}, {738, 338, 64, 64},
+        {814, 338, 64, 64}, {890, 338, 64, 64}, {966, 338, 64, 64},
+        {1042, 338, 64, 64}, {1118, 338, 64, 64}, {1194, 338, 64, 64},
+        {1270, 338, 64, 64}, //Верхняя панель инвентаря 
+
+        {586, 450, 64, 64}, {586, 526, 64, 64}, {662, 450, 104, 140},//ДЛЯ ПЕРСОНАЖА КООРДИНАТЫ
+        {778, 450, 64, 64}, {778, 526, 64, 64},
+
+        {586,602,256,140},//Для описания предмета
+
+        {890, 450, 64, 64}, {966, 450, 64, 64}, {1042, 450, 64, 64}, {1118, 450, 64, 64}, {1194, 450, 64, 64}, 
+        {966, 450, 64, 64}, {1042, 450, 64, 64}, {1118, 450, 64, 64}, {1194, 450, 64, 64}, {1270, 450, 64, 64},//1 СТРОКА инвентаря
+
+        {890, 526, 64, 64}, {966, 526, 64, 64}, {1042, 526, 64, 64}, {1118, 526, 64, 64}, {1194, 526, 64, 64},
+        {966, 526, 64, 64}, {1042, 526, 64, 64}, {1118, 526, 64, 64}, {1194, 526, 64, 64}, {1270, 526, 64, 64},//2 СТРОКА инвентаря
+
+        {890, 602, 64, 64}, {966, 602, 64, 64}, {1042, 602, 64, 64}, {1118, 602, 64, 64}, {1194, 602, 64, 64},
+        {966, 602, 64, 64}, {1042, 602, 64, 64}, {1118, 602, 64, 64}, {1194, 602, 64, 64}, {1270, 602, 64, 64},//3 СТРОКА инвентаря
+
+        {890, 678, 64, 64}, {966, 678, 64, 64}, {1042, 678, 64, 64}, {1118, 678, 64, 64}, {1194, 678, 64, 64},
+        {966, 678, 64, 64}, {1042, 678, 64, 64}, {1118, 678, 64, 64}, {1194, 678, 64, 64}, {1270, 678, 64, 64},//4 СТРОКА инвентаря
+        
+    };
+}
+
+Inventory::~Inventory() {
+    SDL_DestroyTexture(background);
+    for (auto& item : items)
+        SDL_DestroyTexture(item.texture);
+    SDL_DestroyTexture(slotHighlight);
+
+}
+
+SDL_Texture* Inventory::loadTexture(const std::string& path) {
+    SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
+    if (!tex) std::cerr << "❌ Не удалось загрузить: " << path << std::endl;
+    else SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_NEAREST);
+    return tex;
+}
+
+void Inventory::addItem(const std::string& name, const std::string& path) {
+    if (items.size() >= slots.size()) return;
+
+    SDL_Texture* tex = loadTexture(path);
+    if (!tex) return;
+
+    SDL_FRect rect = slots[items.size()];
+    items.push_back({ name, tex, rect });
+}
+
+void Inventory::render() {
+    if (background) {
+        SDL_RenderTexture(renderer, background, nullptr, &inventoryRect);
+    }
+
+    float mx, my;
+    SDL_GetMouseState(&mx, &my);
+
+    // Отрисовать выделение, если курсор над каким-то слотом
+    for (const auto& slot : slots) {
+        if (mx > slot.x && mx < slot.x + slot.w &&
+            my > slot.y && my < slot.y + slot.h) {
+            if (slotHighlight) {
+                SDL_FRect outlineRect = {
+                    slot.x - 4,   // смещение влево
+                    slot.y - 4,   // вверх
+                    slot.w + 8,   // шире
+                    slot.h + 8    // выше
+                };
+                SDL_RenderTexture(renderer, slotHighlight, nullptr, &outlineRect);
+
+            }
+            break;
+        }
+    }
+
+    // Предметы
+    for (const auto& item : items) {
+        if (&item == draggingItem) continue;
+        SDL_RenderTexture(renderer, item.texture, nullptr, &item.rect);
+    }
+
+    if (draggingItem) {
+        SDL_RenderTexture(renderer, draggingItem->texture, nullptr, &draggingItem->rect);
+    }
+}
+
+void Inventory::handleEvent(SDL_Event* event) {
+    float mx, my;
+    SDL_GetMouseState(&mx, &my);
+
+    if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == SDL_BUTTON_LEFT) {
+        if (!draggingItem) {
+            // Попытка взять предмет
+            for (auto& item : items) {
+                if (mx > item.rect.x && mx < item.rect.x + item.rect.w &&
+                    my > item.rect.y && my < item.rect.y + item.rect.h) {
+                    draggingItem = &item;
+                    draggingItemOriginalRect = item.rect;
+                    break;
+                }
+            }
+        }
+        else {
+            // Пытаемся положить предмет в слот
+            SDL_FRect* closestSlot = nullptr;
+            float minDist = std::numeric_limits<float>::max();
+
+            for (auto& slot : slots) {
+                float dx = mx - (slot.x + slot.w / 2.0f);
+                float dy = my - (slot.y + slot.h / 2.0f);
+                float dist = dx * dx + dy * dy;
+
+                if (dist < minDist) {
+                    minDist = dist;
+                    closestSlot = &slot;
+                }
+            }
+
+            // Проверка: занят ли слот
+            bool slotOccupied = false;
+            for (const auto& item : items) {
+                if (&item != draggingItem &&
+                    item.rect.x == closestSlot->x &&
+                    item.rect.y == closestSlot->y) {
+                    slotOccupied = true;
+                    break;
+                }
+            }
+
+            if (!slotOccupied && closestSlot) {
+                draggingItem->rect.x = closestSlot->x;
+                draggingItem->rect.y = closestSlot->y;
+            }
+            else {
+                draggingItem->rect = draggingItemOriginalRect; // откат
+            }
+
+            draggingItem = nullptr; // отпускаем предмет
+        }
+    }
+
+    if (draggingItem) {
+        // предмет следует за курсором
+        draggingItem->rect.x = mx - draggingItem->rect.w / 2.0f;
+        draggingItem->rect.y = my - draggingItem->rect.h / 2.0f;
     }
 
 }
-
-Inventory::~Inventory() {}
-
-void Inventory::addItem(const std::string& name, SDL_Texture* icon, int quantity) {
-    items.push_back({ name, icon, quantity });
-}
-
-void Inventory::removeItem(const std::string& name) {
-    items.erase(std::remove_if(items.begin(), items.end(),
-        [&](const Item& item) { return item.name == name; }), items.end());
-}
-
-void Inventory::render(SDL_Renderer* renderer) {
-    if (items.empty()) return; // ���� ��� ���������, �� ������
-
-    // ���������� ���������
-    int screenWidth = 1920; // ����� �������� ����������
-    int screenHeight = 1080;
-    SDL_FRect inventoryRect = { (screenWidth - 1000) / 2, (screenHeight - 800) / 2, 1000, 800 };
-
-    // ������ ���
-    SDL_RenderTexture(renderer, inventoryBackground, nullptr, &inventoryRect);
-
-    // ��������� ��������� � �������
-    int startX = inventoryRect.x + 50;
-    int startY = inventoryRect.y + 50;
-    int cellSize = 64;
-    int spacing = 10;
-    int columns = 5;
-
-    for (size_t i = 0; i < items.size(); ++i) {
-        int x = startX + (i % columns) * (cellSize + spacing);
-        int y = startY + (i / columns) * (cellSize + spacing);
-        SDL_FRect itemRect = { x, y, cellSize, cellSize };
-        SDL_RenderTexture(renderer, items[i].icon, nullptr, &itemRect);
-    }
-}
-
 
 

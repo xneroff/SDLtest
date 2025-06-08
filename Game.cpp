@@ -32,7 +32,7 @@ SDL_AppResult Game::SDL_AppInit() {
     enemies.push_back(new Enemy(renderer, 600, 800));
     enemies.push_back(new Enemy(renderer, 1200, 800));
 
-    font = TTF_OpenFont("assets/fonts/Orbitron-VariableFont_wght.ttf", 32);
+    font = TTF_OpenFont("assets/fonts/Jacquard12-Regular.ttf", 34);
     player = new Player(renderer, font, camera);
 
     player->setCollisions(tileMap->getCollisionRects());

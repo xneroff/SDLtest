@@ -15,6 +15,7 @@ void MainMenu::render() {
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
     float centerX = w / 2.0f - 200.f / 2.0f;
+
     if (!showSettings) {
         renderButton({ centerX, 300.f, 200.f, 60.f }, "Continue");
         renderButton({ centerX, 380.f, 200.f, 60.f }, "Settings");
@@ -23,9 +24,12 @@ void MainMenu::render() {
     else {
         renderButton({ centerX, 300.f, 200.f, 60.f }, "Windowed");
         renderButton({ centerX, 380.f, 200.f, 60.f }, "Fullscreen");
+        renderButton({ centerX, 460.f, 200.f, 60.f }, "Back");
     }
+
     SDL_RenderPresent(renderer);
 }
+
 
 void MainMenu::renderButton(const SDL_FRect& rect, const std::string& text) {
     SDL_SetRenderDrawColor(renderer, 100, 100, 255, 255);
@@ -54,30 +58,33 @@ void MainMenu::handleEvent(const SDL_Event& e, bool& resume, bool& quit) {
     float centerX = w / 2.0f - 200.f / 2.0f;
     float x = e.button.x;
     float y = e.button.y;
+
     if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
         if (!showSettings) {
-            if (x >= centerX && x <= centerX + 200.f && y >= 300.f && y <= 360.f) {
-                resume = true;
-            }
-            else if (x >= centerX && x <= centerX + 200.f && y >= 380.f && y <= 440.f) {
-                showSettings = true;
-            }
-            else if (x >= centerX && x <= centerX + 200.f && y >= 460.f && y <= 520.f) {
-                quit = true;
+            if (x >= centerX && x <= centerX + 200.f) {
+                if (y >= 300.f && y <= 360.f) resume = true;
+                else if (y >= 380.f && y <= 440.f) showSettings = true;
+                else if (y >= 460.f && y <= 520.f) quit = true;
             }
         }
         else {
-            if (x >= centerX && x <= centerX + 200.f && y >= 300.f && y <= 360.f) {
-                SDL_SetWindowFullscreen(window, 0);
-                SDL_SetWindowSize(window, 1280, 720);
-                SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-                SDL_SetWindowBordered(window, true);
-                showSettings = false;
-            }
-            else if (x >= centerX && x <= centerX + 200.f && y >= 380.f && y <= 440.f) {
-                SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-                showSettings = false;
+            if (x >= centerX && x <= centerX + 200.f) {
+                if (y >= 300.f && y <= 360.f) {
+                    SDL_SetWindowFullscreen(window, 0);
+                    SDL_SetWindowBordered(window, true);
+                    SDL_SetWindowSize(window, 1280, 720);
+                    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+                    showSettings = false;
+                }
+                else if (y >= 380.f && y <= 440.f) {
+                    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+                    showSettings = false;
+                }
+                else if (y >= 460.f && y <= 520.f) {
+                    showSettings = false; // кнопка "Назад"
+                }
             }
         }
     }
 }
+

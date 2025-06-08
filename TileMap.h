@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SDL3/SDL.h>
 #include <json.hpp>
 #include <vector>
