@@ -3,11 +3,8 @@
 Camera::Camera(float screenWidth, float screenHeight)
     : screenW(screenWidth), screenH(screenHeight)
 {
-    float zoomFactor = 5.0f; // ”меньшаем поле зрени€ камеры (можно регулировать)
-    /*camera = { 0, 0, screenWidth * zoomFactor, screenHeight * zoomFactor };*/
-    camera = { 0, 0, screenWidth, screenHeight };
+    camera = { 0, 0, screenWidth , screenHeight };
 }
-
 Camera::~Camera() {}
 
 void Camera::update(const SDL_FRect& player, float mapWidth, float mapHeight) {

@@ -19,6 +19,7 @@ SDL_AppResult Game::SDL_AppInit() {
     SDL_CreateWindowAndRenderer("SDL3 Game", 1920, 1080, SDL_WINDOW_RESIZABLE, &window, &renderer);
     SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     camera = new Camera(1920, 1080);
+   
     tileMap = new TileMap(renderer);
     tileMap->loadFromFile("assets/map/MEGATEST.json");
     
@@ -89,6 +90,7 @@ SDL_AppResult Game::SDL_AppIterate() {
         tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 3");
         tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 4");
         tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 5");
+        tileMap->renderLayer(renderer, camera->getView(), u8"Tile Layer 6");
         
 
         Uint32 now = SDL_GetTicks();

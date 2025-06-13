@@ -3,6 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <string>
 #include <vector>
+#include "Animation.h"
 
 struct Item {
     std::string name;
@@ -26,6 +27,9 @@ private:
     SDL_FRect draggingItemOriginalRect;
     SDL_Texture* slotHighlight = nullptr;
 
+    AnimationSet previewAnim;
+    Animation previewHandler;
+    SDL_FRect previewRect;  // Ячейка для отображения персонажа
 
     std::vector<SDL_FRect> slots;
     std::vector<Item> items;

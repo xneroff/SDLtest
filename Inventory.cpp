@@ -6,7 +6,14 @@ Inventory::Inventory(SDL_Renderer* renderer) : renderer(renderer) {
     SDL_SetTextureScaleMode(background, SDL_SCALEMODE_NEAREST);
     slotHighlight = IMG_LoadTexture(renderer, "assets/MoiInventory/Inventory_select.png");
     SDL_SetTextureScaleMode(slotHighlight, SDL_SCALEMODE_NEAREST);
-    
+    previewRect = { 662, 450, 104, 140 };
+
+    SDL_Texture* idleTex = IMG_LoadTexture(renderer, "assets/1 Woodcutter/Woodcutter_idle.png");
+    if (idleTex) {
+        SDL_SetTextureScaleMode(idleTex, SDL_SCALEMODE_NEAREST);
+        previewAnim = { idleTex, 4, 200 };  // 4 кадра, задержка 200 мс
+    }
+
 
     // Центр инвентаря
     inventoryRect = { 554, 306, 812, 468 };  // 203x117 * 4
@@ -23,7 +30,7 @@ Inventory::Inventory(SDL_Renderer* renderer) : renderer(renderer) {
 
         {586,602,256,140},//Для описания предмета
 
-        {890, 450, 64, 64}, {966, 450, 64, 64}, {1042, 450, 64, 64}, {1118, 450, 64, 64}, {1194, 450, 64, 64}, 
+        {890, 450, 64, 64}, {966, 450, 64, 64}, {1042, 450, 64, 64}, {1118, 450, 64, 64}, {1194, 450, 64, 64},
         {966, 450, 64, 64}, {1042, 450, 64, 64}, {1118, 450, 64, 64}, {1194, 450, 64, 64}, {1270, 450, 64, 64},//1 СТРОКА инвентаря
 
         {890, 526, 64, 64}, {966, 526, 64, 64}, {1042, 526, 64, 64}, {1118, 526, 64, 64}, {1194, 526, 64, 64},
@@ -34,7 +41,7 @@ Inventory::Inventory(SDL_Renderer* renderer) : renderer(renderer) {
 
         {890, 678, 64, 64}, {966, 678, 64, 64}, {1042, 678, 64, 64}, {1118, 678, 64, 64}, {1194, 678, 64, 64},
         {966, 678, 64, 64}, {1042, 678, 64, 64}, {1118, 678, 64, 64}, {1194, 678, 64, 64}, {1270, 678, 64, 64},//4 СТРОКА инвентаря
-        
+
     };
 }
 
@@ -73,21 +80,48 @@ void Inventory::render() {
 
     // Отрисовать выделение, если курсор над каким-то слотом
     for (const auto& slot : slots) {
+        // Пропускаем прямоугольник персонажа
+        if (slot.x == previewRect.x && slot.y == previewRect.y &&
+            slot.w == previewRect.w && slot.h == previewRect.h) {
+            continue;
+        }
+
         if (mx > slot.x && mx < slot.x + slot.w &&
             my > slot.y && my < slot.y + slot.h) {
             if (slotHighlight) {
                 SDL_FRect outlineRect = {
-                    slot.x - 4,   // смещение влево
-                    slot.y - 4,   // вверх
-                    slot.w + 8,   // шире
-                    slot.h + 8    // выше
+                    slot.x - 4,
+                    slot.y - 4,
+                    slot.w + 8,
+                    slot.h + 8
                 };
                 SDL_RenderTexture(renderer, slotHighlight, nullptr, &outlineRect);
-
             }
             break;
         }
     }
+
+
+    // 🎮 Отображение idle-анимации персонажа в превью-окне
+    if (previewAnim.texture) {
+        SDL_FRect src;
+        src.x = previewHandler.getCurrentFrame() * 48;  // кадры идут по ширине
+        src.y = 0;
+        src.w = 48;
+        src.h = 48;
+
+        previewHandler.update(previewAnim, src, 48);
+
+        SDL_FRect dst;
+        dst.x = previewRect.x;
+        dst.y = previewRect.y - 30;
+        dst.w = previewRect.w + 80;
+        dst.h = previewRect.h + 30;
+
+        SDL_RenderTexture(renderer, previewAnim.texture, &src, &dst);
+    }
+
+
 
     // Предметы
     for (const auto& item : items) {
@@ -144,12 +178,25 @@ void Inventory::handleEvent(SDL_Event* event) {
             }
 
             if (!slotOccupied && closestSlot) {
-                draggingItem->rect.x = closestSlot->x;
-                draggingItem->rect.y = closestSlot->y;
+                // ❌ Запрещаем класть в слот персонажа (previewRect)
+                if (!(closestSlot->x == previewRect.x &&
+                    closestSlot->y == previewRect.y &&
+                    closestSlot->w == previewRect.w &&
+                    closestSlot->h == previewRect.h)) {
+
+                    draggingItem->rect.x = closestSlot->x;
+                    draggingItem->rect.y = closestSlot->y;
+                }
+                else {
+                    // откат, если пытались положить в previewRect
+                    draggingItem->rect = draggingItemOriginalRect;
+                }
             }
             else {
                 draggingItem->rect = draggingItemOriginalRect; // откат
             }
+
+        
 
             draggingItem = nullptr; // отпускаем предмет
         }
@@ -162,5 +209,3 @@ void Inventory::handleEvent(SDL_Event* event) {
     }
 
 }
-
-

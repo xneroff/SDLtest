@@ -75,4 +75,5 @@ private:
     int velocityY = 0;
     static const int gravity = 1;
     static const int sila_prizhka = -15;
+
 };
