@@ -184,22 +184,17 @@
     "map.width": 250,
     "openFiles": [
         "MEGATEST.tmx",
-        "Map2.json",
-        "background 1.tsx",
-        "ParallaxCave1.tsx",
-        "ParallaxCave2.tsx",
-        "ParallaxCave3.tsx",
-        "ParallaxCave4.tsx"
+        "Map2.json"
     ],
     "project": "MEGATEST.tiled-project",
     "recentFiles": [
+        "MEGATEST.tmx",
+        "Map2.json",
         "ParallaxCave4.tsx",
         "ParallaxCave3.tsx",
         "ParallaxCave2.tsx",
         "ParallaxCave1.tsx",
         "background 1.tsx",
-        "MEGATEST.tmx",
-        "Map2.json",
         "Tileset.tsx",
         "CaveBG.tsx",
         "8.tsx",
