@@ -5,7 +5,7 @@
 #include "Animation.h"
 #include "Camera.h"
 #include <SDL3_ttf/SDL_ttf.h>
-
+#include <vector>
 class NPC {
 public:
     NPC(SDL_Renderer* renderer, float x, float y);
@@ -18,6 +18,13 @@ public:
     bool isNearPlayer(const SDL_FRect& playerRect) const;
     bool showDialog = false;
     std::string dialogText = "Привет, путник!";
+    std::vector<std::string> dialogPhrases = {
+    "Privet, putnik!",
+    "be safe in thats places.",
+    "Talk, in forest can live monsters...",
+    "Have a good luck!"
+    };
+    int currentPhrase = 0;
 
 private:
     void initAnimations();

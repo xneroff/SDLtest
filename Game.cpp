@@ -37,11 +37,11 @@ SDL_AppResult Game::SDL_AppInit() {
     enemies.push_back(new Enemy(renderer, 600, 800));
     enemies.push_back(new Enemy(renderer, 1200, 800));
 
-    npcs.push_back(new NPC(renderer, 400, 1300));
+    npcs.push_back(new NPC(renderer, 400, 1377));
    
 
 
-    font = TTF_OpenFont("assets/fonts/Jacquard12-Regular.ttf", 34);
+    font = TTF_OpenFont("assets/fonts/PressStart2P-Regular.ttf", 12 );
     player = new Player(renderer, font, camera);
 
     player->setCollisions(tileMap->getCollisionRects());
@@ -142,11 +142,21 @@ SDL_AppResult Game::SDL_AppIterate() {
         if (ePressed && !ePreviouslyPressed) {
             for (auto& npc : npcs) {
                 if (npc->isNearPlayer(player->gedDest())) {
-                    npc->showDialog = !npc->showDialog;  // переключаем диалог
-                    break;  // только один NPC
+                    if (!npc->showDialog) {
+                        npc->showDialog = true;
+                        npc->currentPhrase = 0;
+                    }
+                    else {
+                        npc->currentPhrase++;
+                        if (npc->currentPhrase >= npc->dialogPhrases.size()) {
+                            npc->showDialog = false;
+                        }
+                    }
+                    break;
                 }
             }
         }
+
         ePreviouslyPressed = ePressed;
 
         float deltaTime = 1.0f / 60.0f;  // Можно позже заменить на реальное время между кадрами
@@ -167,7 +177,8 @@ SDL_AppResult Game::SDL_AppIterate() {
                 SDL_RenderFillRect(renderer, &screenBox);
 
                 SDL_Color color = { 255, 255, 255, 255 };
-                std::string text = "Hello, hero!";
+                std::string text = npc->dialogPhrases[npc->currentPhrase];
+
 
                 // SDL3: используем length, как требует сигнатура
                 SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), text.length(), color);

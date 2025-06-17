@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="144">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="146">
  <editorsettings>
   <export target="MEGATEST.json" format="json"/>
  </editorsettings>
@@ -226,7 +226,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="15" name="Tile Layer 5" width="200" height="50">
+ <layer id="15" name="Tile Layer 5" width="200" height="50" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -335,23 +335,23 @@
 </data>
  </layer>
  <objectgroup id="5" name="Collisions">
-  <object id="36" name="Spawn" x="290.97" y="1420.24">
+  <object id="36" name="Spawn" x="290.47" y="1439.24">
    <point/>
   </object>
-  <object id="37" x="161.697" y="1446.12" width="576.69" height="17.0307"/>
-  <object id="95" x="2.66667" y="1316.67" width="159.592" height="144.667"/>
-  <object id="101" x="738.667" y="1412" width="30" height="33.6663"/>
-  <object id="102" x="770.667" y="1380" width="95.3333" height="33.6663"/>
-  <object id="103" x="866.667" y="1348" width="94" height="33.6663"/>
-  <object id="104" x="962.667" y="1316" width="318.667" height="285"/>
-  <object id="105" x="1378" y="1249" width="477.5" height="352"/>
+  <object id="37" x="157.03" y="1440.6" width="580.872" height="19.2125"/>
+  <object id="95" x="-2.66667" y="1316" width="159.592" height="144.667"/>
+  <object id="101" x="736.667" y="1409.09" width="32" height="36.5754"/>
+  <object id="102" x="768.667" y="1376.36" width="97.3333" height="37.3027"/>
+  <object id="103" x="864.485" y="1345.09" width="98.3636" height="36.5754"/>
+  <object id="104" x="960.848" y="1312.18" width="320.485" height="288.818"/>
+  <object id="105" x="1376.36" y="1248.64" width="479.136" height="352.364"/>
   <object id="106" x="1899" y="1397" width="1"/>
   <object id="107" x="1855" y="1280.5" width="32.5" height="31"/>
   <object id="109" x="1888" y="1312" width="63.5" height="31"/>
-  <object id="110" x="1952" y="1344" width="32.5" height="31"/>
-  <object id="111" x="1984" y="1376" width="62" height="31"/>
-  <object id="112" x="2048" y="1408" width="32.5" height="31"/>
-  <object id="113" x="2080" y="1440" width="542.5" height="31"/>
+  <object id="110" x="1952" y="1344" width="31.7727" height="31"/>
+  <object id="111" x="1984" y="1376.36" width="62.9091" height="30.6364"/>
+  <object id="112" x="2048" y="1408.91" width="31.4091" height="30.0909"/>
+  <object id="113" x="2080" y="1440.55" width="542.5" height="30.4545"/>
   <object id="114" x="2624" y="1472" width="32.5" height="31"/>
   <object id="115" x="2656" y="1504" width="96.5" height="31"/>
   <object id="116" x="2752" y="1441" width="32.5" height="62"/>
@@ -374,6 +374,11 @@
   <object id="140" x="4384" y="1216" width="31" height="32"/>
   <object id="141" name="ToLocation2" x="6392.67" y="1177.33" width="6" height="69.3333"/>
   <object id="142" name="FromMap2" x="6348" y="1229.33">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="17" name="NPCSpawns">
+  <object id="144" name="NPCSpawn1" x="567.5" y="1438.5">
    <point/>
   </object>
  </objectgroup>
