@@ -7,9 +7,46 @@
 #include <ctime>
 #include "TileMap.h"
 #include "NPC.h"
-#include "Game.h"
+#include <iostream>
+
+
 std::vector<NPC*> npcs;
 std::vector<Enemy*> enemies;
+std::vector<FloatingText> floatingTexts;
+
+void showFloatingText(const std::string& text, float x, float y) {
+    floatingTexts.push_back({ text, {x, y}, SDL_GetTicks(), 2000 }); // 2 секунды
+}
+
+void renderFloatingTexts(SDL_Renderer* renderer, TTF_Font* font, Camera* camera) {
+    Uint32 now = SDL_GetTicks();
+    SDL_Color color = { 255, 255, 255, 255 };
+
+    for (auto it = floatingTexts.begin(); it != floatingTexts.end();) {
+        if (now - it->startTime > it->duration) {
+            it = floatingTexts.erase(it);
+        }
+        else {
+            SDL_Surface* surface = TTF_RenderText_Solid(font, it->text.c_str(), it->text.length(), color);
+
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+            SDL_DestroySurface(surface);
+
+            SDL_FRect screenPos = camera->apply({ it->position.x, it->position.y - ((now - it->startTime) / 20.0f), 0, 0 });
+
+            float w = 0, h = 0;
+            SDL_GetTextureSize(texture, &w, &h);
+
+            SDL_FRect dst = { screenPos.x, screenPos.y, (float)w, (float)h };
+            SDL_RenderTexture(renderer, texture, nullptr, &dst);
+
+            SDL_DestroyTexture(texture);
+            ++it;
+        }
+    }
+}
+
+
 
 Game::Game() {}
 
@@ -41,7 +78,7 @@ SDL_AppResult Game::SDL_AppInit() {
    
 
 
-    font = TTF_OpenFont("assets/fonts/PressStart2P-Regular.ttf", 12 );
+    font = TTF_OpenFont("assets/fonts/PressStart2P-Regular.ttf", 14 );
     player = new Player(renderer, font, camera);
 
     player->setCollisions(tileMap->getCollisionRects());
@@ -140,6 +177,18 @@ SDL_AppResult Game::SDL_AppIterate() {
         bool ePressed = keys[SDL_SCANCODE_E];
 
         if (ePressed && !ePreviouslyPressed) {
+            for (auto& chest : tileMap->getChestsMutable()) {
+                SDL_FRect playerRect = player->gedDest();
+                if (!chest.opened && SDL_HasRectIntersectionFloat(&playerRect, &chest.rect)) {
+                    chest.opened = true;
+                    std::string message = "+ " + std::to_string(chest.amount) + " x " + chest.item;
+                    showFloatingText(message, chest.rect.x, chest.rect.y);
+
+                }
+
+            }
+
+            // обработка NPC осталась без изменений
             for (auto& npc : npcs) {
                 if (npc->isNearPlayer(player->gedDest())) {
                     if (!npc->showDialog) {
@@ -158,6 +207,7 @@ SDL_AppResult Game::SDL_AppIterate() {
         }
 
         ePreviouslyPressed = ePressed;
+
 
         float deltaTime = 1.0f / 60.0f;  // Можно позже заменить на реальное время между кадрами
 
@@ -200,6 +250,8 @@ SDL_AppResult Game::SDL_AppIterate() {
 
         player->otrisovka();
         player->obnovleniepersa();
+        renderFloatingTexts(renderer, font, camera);
+
     }
 
     SDL_RenderPresent(renderer);

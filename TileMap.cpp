@@ -3,6 +3,7 @@
     #include <SDL3_image/SDL_image.h>
     #include <iostream>
 #include "Camera.h"
+#include "Chest.h"
 
     using json = nlohmann::json;
 
@@ -123,28 +124,67 @@
 
 
     void TileMap::loadCollisions(const json& layersJson) {
-        std::cout << "Loading collisions...\n";
+        std::cout << "Loading collisions and chests...\n";
 
         for (const auto& layer : layersJson) {
-            if (layer["type"] != "objectgroup" || layer["name"] != "Collisions") continue;
+            std::string layerName = layer["name"];
+            std::string layerType = layer["type"];
 
-            for (const auto& obj : layer["objects"]) {
-                if (obj.contains("name") && obj["name"] == "Spawn") {
-                    spawnPoint.x = obj["x"].get<float>();
-                    spawnPoint.y = obj["y"].get<float>(); // Убираем "-32", если оно мешает
+            if (layerType == "objectgroup") {
+                if (layerName == "Collisions") {
+                    for (const auto& obj : layer["objects"]) {
+                        if (obj.contains("name") && obj["name"] == "Spawn") {
+                            spawnPoint.x = obj["x"].get<float>();
+                            spawnPoint.y = obj["y"].get<float>();
 
-                    std::cout << "Player spawn point: (" << spawnPoint.x << ", " << spawnPoint.y << ")\n";
+                            std::cout << "Player spawn point: (" << spawnPoint.x << ", " << spawnPoint.y << ")\n";
+                        }
+                        else {
+                            SDL_FRect rect = { obj["x"], obj["y"], obj["width"], obj["height"] };
+                            collisionRects.push_back(rect);
+                            std::cout << "Added collision box: (" << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << ")\n";
+                        }
+                    }
                 }
-                else {
-                    SDL_FRect rect = { obj["x"], obj["y"], obj["width"], obj["height"] };
-                    collisionRects.push_back(rect);
-                    std::cout << "Added collision box: (" << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << ")\n";
+
+                // 🔥 Добавляем загрузку сундуков из слоя "Chests"
+                else if (layerName == "Chests") {
+                    for (const auto& obj : layer["objects"]) {
+                        Chest chest;
+                        chest.rect = {
+                            static_cast<float>(obj["x"]),
+                            static_cast<float>(obj["y"]),
+                            static_cast<float>(obj["width"]),
+                            static_cast<float>(obj["height"])
+                        };
+                        chest.name = obj["name"];
+
+                        if (obj.contains("properties")) {
+                            for (const auto& prop : obj["properties"]) {
+                                std::string pname = prop["name"];
+                                if (pname == "Item") {
+                                    chest.item = prop["value"];
+                                }
+                                else if (pname == "amount") {
+                                    chest.amount = prop["value"];
+                                }
+                                else if (pname == "Opened" || pname == "opened") {
+                                    chest.opened = prop["value"];
+                                }
+                            }
+                        }
+
+                        chests.push_back(chest);
+                        std::cout << "Loaded chest: " << chest.name << " with item: " << chest.item << " x" << chest.amount << std::endl;
+                    }
                 }
             }
         }
-        std::cout << "✅ Total collisions loaded: " << collisionRects.size() << std::endl;
 
+        std::cout << "✅ Total collisions loaded: " << collisionRects.size() << std::endl;
+        std::cout << "✅ Total chests loaded: " << chests.size() << std::endl;
     }
+
 
 
 

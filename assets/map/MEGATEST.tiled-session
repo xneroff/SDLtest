@@ -187,6 +187,7 @@
         "Map2.json"
     ],
     "project": "MEGATEST.tiled-project",
+    "property.type": "bool",
     "recentFiles": [
         "Map2.json",
         "MEGATEST.tmx",

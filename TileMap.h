@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Camera.h"
+#include "Chest.h"
 struct Tileset {
     int firstgid;
     int columns;
@@ -28,12 +29,13 @@ public:
 
     int getMapWidth() const { return mapWidth; }
     int getMapHeight() const { return mapHeight; }
-
+    const std::vector<Chest>& getChests() const { return chests; }
+    std::vector<Chest>& getChestsMutable() { return chests; } // если нужен доступ для изменений
 
 private:
 
     SDL_FPoint spawnPoint{ 0, 0 };
-
+    std::vector<Chest> chests;
     SDL_Renderer* renderer;
     std::vector<Tileset> tilesets;
     std::vector<MapLayer> layers;
