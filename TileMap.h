@@ -3,7 +3,7 @@
 #include <json.hpp>
 #include <vector>
 #include <string>
-
+#include "Camera.h"
 struct Tileset {
     int firstgid;
     int columns;
@@ -22,7 +22,7 @@ public:
     ~TileMap();
 
     bool loadFromFile(const std::string& path);
-    void renderLayer(SDL_Renderer* renderer, const SDL_FRect& camera, const std::string& name);
+    void renderLayer(SDL_Renderer* renderer, Camera* camera, const std::string& name);
     SDL_FPoint getSpawnPoint() const;
     const std::vector<SDL_FRect>& getCollisionRects() const;
 

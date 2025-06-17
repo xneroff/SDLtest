@@ -5,10 +5,12 @@ class Camera {
 public:
     Camera(float screenWidth, float screenHeight);
     ~Camera();
+
     void update(const SDL_FRect& player, float mapWidth, float mapHeight);
     SDL_FRect getView() const { return camera; }
-
     SDL_FRect apply(const SDL_FRect& worldRect) const;
+
+    float zoom = 2.0f; // ← масштаб, например 2.0 = увеличить в 2 раза
 
 private:
     SDL_FRect camera;

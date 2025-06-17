@@ -2,6 +2,7 @@
     #include <fstream>
     #include <SDL3_image/SDL_image.h>
     #include <iostream>
+#include "Camera.h"
 
     using json = nlohmann::json;
 
@@ -45,32 +46,35 @@
     }
 
 
-    void TileMap::renderLayer(SDL_Renderer* renderer, const SDL_FRect& camera, const std::string& name) {
-        SDL_FRect dest = { 0, 0, 32, 32 }; // tileWidth, tileHeight
-
+    void TileMap::renderLayer(SDL_Renderer* renderer, Camera* camera, const std::string& name) {
         for (const auto& layer : layers) {
             if (layer.name != name) continue;
             for (int y = 0; y < mapHeight; ++y) {
                 for (int x = 0; x < mapWidth; ++x) {
                     int tileID = layer.data[y * mapWidth + x];
                     if (tileID == 0) continue;
+
                     const Tileset* ts = nullptr;
-                    for (const auto& tileset : tilesets) {
+                    for (const auto& tileset : tilesets)
                         if (tileID >= tileset.firstgid) ts = &tileset;
-                    }
+
                     if (!ts || !ts->texture) continue;
+
                     SDL_FRect src = {
-                        (tileID - ts->firstgid) % ts->columns * 32,
-                        (tileID - ts->firstgid) / ts->columns * 32,
-                        32, 32
+                        float((tileID - ts->firstgid) % ts->columns * 32),
+                        float((tileID - ts->firstgid) / ts->columns * 32),
+                        32.0f, 32.0f
                     };
-                    dest.x = x * 32 - camera.x;
-                    dest.y = y * 32 - camera.y;
-                    SDL_RenderTexture(renderer, ts->texture, &src, &dest);
+
+                    SDL_FRect worldDest = { float(x * 32), float(y * 32), 32.0f, 32.0f };
+                    SDL_FRect screenDest = camera->apply(worldDest);
+
+                    SDL_RenderTexture(renderer, ts->texture, &src, &screenDest);
                 }
             }
         }
     }
+
 
 
     void TileMap::loadTilesets(const std::string& folder, const json& tilesetsJson) {

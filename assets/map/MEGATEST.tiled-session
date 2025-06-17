@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Map2.json",
+    "activeFile": "MEGATEST.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -53,10 +53,10 @@
                 5
             ],
             "scale": 1.5,
-            "selectedLayer": 4,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 6211.333333333333,
-                "y": 1134.3333333333333
+                "x": 3200,
+                "y": 799.6666666666665
             }
         },
         "Map2.json": {
@@ -66,8 +66,8 @@
             "scale": 0.75,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 510.6666666666666,
-                "y": 1166
+                "x": 3746.6666666666665,
+                "y": 800.6666666666666
             }
         },
         "Medieval_props_free.tsx": {
@@ -188,8 +188,8 @@
     ],
     "project": "MEGATEST.tiled-project",
     "recentFiles": [
-        "MEGATEST.tmx",
         "Map2.json",
+        "MEGATEST.tmx",
         "ParallaxCave4.tsx",
         "ParallaxCave3.tsx",
         "ParallaxCave2.tsx",

@@ -9,7 +9,7 @@
 #include "Interface.h"
 #include "Camera.h"
 #include "Inventory.h"
-
+#include "NPC.h"
 
 
 
@@ -34,6 +34,7 @@ public:
     bool isAttacking() const;
     bool readyToDealDamage() const;
 
+
 private:
     void setAnim(const std::string& animName);
     SDL_FRect hitbox;
@@ -44,6 +45,10 @@ private:
     void attackHandler();
     void moveHandler(const bool* keys);
     void initAnimations();
+
+    void handleInteraction(const std::vector<NPC*>& npcs);
+    bool isDialogOpen = false;
+
 
     SDL_Renderer* renderer;
     TTF_Font* font;
