@@ -10,7 +10,7 @@
         initAnimations();
         src = { 0, 0, 48, 48 };
         dest = { 0, 0, 64, 64 }; // Увеличено 2x
-        speed = 5;
+        speed = 3;
         currentHealth = 100;
         TotalHealth = 100;
         interface = new Interface(renderer, font, currentHealth, TotalHealth);
@@ -106,7 +106,7 @@
         }
         else if (keys[SDL_SCANCODE_D]) {
             flip = SDL_FLIP_NONE;
-            currentAnim = "walk";
+            currentAnim = "walk";       
         }
         else {
             currentAnim = "idle";

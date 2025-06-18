@@ -228,7 +228,7 @@ SDL_AppResult Game::SDL_AppIterate() {
 
                 SDL_Color color = { 255, 255, 255, 255 };
                 std::string text = npc->dialogPhrases[npc->currentPhrase];
-
+                                                                                        
 
                 // SDL3: используем length, как требует сигнатура
                 SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), text.length(), color);

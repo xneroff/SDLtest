@@ -53,10 +53,10 @@
                 5
             ],
             "scale": 1.5,
-            "selectedLayer": 0,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 3200,
-                "y": 799.6666666666665
+                "x": 505.3333333333333,
+                "y": 1329
             }
         },
         "Map2.json": {
